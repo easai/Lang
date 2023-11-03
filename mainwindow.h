@@ -20,6 +20,8 @@ public:
   ~MainWindow();
 
 private slots:
+  void updateItem();
+  void createItem();
   void about();
 
 private:

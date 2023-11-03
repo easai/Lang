@@ -8,6 +8,7 @@
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QtSql>
+#include <QInputDialog>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -23,6 +24,8 @@ MainWindow::MainWindow(QWidget *parent)
            << "en"
            << "ja";
   setTable();
+  connect(ui->tableWidget, &QTableWidget::cellChanged, this,
+          &MainWindow::updateItem);
 }
 
 MainWindow::~MainWindow() {
@@ -61,6 +64,29 @@ void MainWindow::setTable() {
 
     QTableWidgetItem *descItem = new QTableWidgetItem(item.ja());
     ui->tableWidget->setItem(i, ++cnt, descItem);
+  }
+}
+
+void MainWindow::updateItem() {
+  QList<QTableWidgetItem *> lst = ui->tableWidget->selectedItems();
+  for (QTableWidgetItem *pItem : lst) {
+    QString exp = pItem->text();
+    int row = pItem->row();
+    int col = pItem->column();
+    QTableWidgetItem *pId = ui->tableWidget->item(row, 0);
+    int id = pId->text().toInt();
+    QString field = m_header.at(col);
+    m_list.updateItem(&m_db, exp, field, id);
+  }
+}
+
+void MainWindow::createItem() {
+  bool ok;
+  QString exp = QInputDialog::getText(this, tr("Add new script"), tr("en"),
+                                      QLineEdit::Normal, "", &ok);
+  if (ok) {
+    m_list.createItem(&m_db, exp, "en");
+    setTable();
   }
 }
 
