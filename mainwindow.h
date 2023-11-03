@@ -27,7 +27,7 @@ private:
   Config m_config;
   LangList m_list;
   QSqlDatabase m_db;
-
+  QStringList m_header;
 
   void setTable();
 };

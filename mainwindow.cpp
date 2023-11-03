@@ -19,6 +19,9 @@ MainWindow::MainWindow(QWidget *parent)
   connect(ui->action_Quit, &QAction::triggered, this, &QApplication::quit);
   m_config.load();
   restoreGeometry(m_config.geom());
+  m_header << "id"
+           << "en"
+           << "ja";
   setTable();
 }
 
@@ -34,18 +37,11 @@ void MainWindow::setTable() {
   if (nItems <= 0) {
     return;
   }
-  //    m_list.sort();
+  m_list.sort();
 
-  QStringList header;
-  header << "id"
-           << "en"
-           << "ja";
-
-  ui->tableWidget->setColumnCount(header.count());
-  ui->tableWidget->setHorizontalHeaderLabels(header);
+  ui->tableWidget->setColumnCount(m_header.count());
+  ui->tableWidget->setHorizontalHeaderLabels(m_header);
   ui->tableWidget->horizontalHeader()->hideSection(0);
-  //  ui->tableWidget->horizontalHeader()->setSectionResizeMode(
-  //      3, QHeaderView::Stretch);
   ui->tableWidget->verticalHeader()->setVisible(false);
 
   QList<Lang> lst = m_list.list();
@@ -65,10 +61,6 @@ void MainWindow::setTable() {
 
     QTableWidgetItem *descItem = new QTableWidgetItem(item.ja());
     ui->tableWidget->setItem(i, ++cnt, descItem);
-
-    //        QTableWidgetItem *commentaryItem = new
-    //        QTableWidgetItem(item.commentary()); ui->tableWidget->setItem(i,
-    //        ++cnt, commentaryItem);
   }
 }
 

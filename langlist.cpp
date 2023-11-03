@@ -48,6 +48,14 @@ int LangList::retrieve(QSqlDatabase *db) {
 }
 
 
+void LangList::sort() {
+    std::sort(m_list.begin(), m_list.end(), comparetaor);
+}
+
+bool LangList::comparetaor(Lang a, Lang b) { return a.en() < b.en(); }
+
+
+
 QList<Lang> LangList::list() const
 {
     return m_list;

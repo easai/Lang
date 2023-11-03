@@ -15,6 +15,8 @@ public:
     LangList &operator=(const LangList &);
 
     int retrieve(QSqlDatabase* db);
+    void sort();
+    static bool comparetaor(Lang a, Lang b);
 
     QList<Lang> list() const;
     void setList(const QList<Lang> &newList);
