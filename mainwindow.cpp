@@ -26,6 +26,8 @@ MainWindow::MainWindow(QWidget *parent)
   setTable();
   connect(ui->tableWidget, &QTableWidget::cellChanged, this,
           &MainWindow::updateItem);
+  connect(ui->pushButton_add, &QPushButton::clicked, this,
+          &MainWindow::createItem);
 }
 
 MainWindow::~MainWindow() {
