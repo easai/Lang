@@ -39,7 +39,7 @@ int LangList::retrieve(QSqlDatabase *db) {
             QString ja = query.value(++cnt).toString();
 //            int parent_id = query.value(++cnt).toInt();
 //            QString commentary = query.value(++cnt).toString();
-            Lang lang(this, en, ja);
+            Lang lang(this, id, en, ja);
             m_list.append(lang);
         }
     }

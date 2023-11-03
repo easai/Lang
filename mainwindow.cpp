@@ -36,16 +36,14 @@ void MainWindow::setTable() {
   }
   //    m_list.sort();
 
-  //  m_header << "id"
-  //           << "en"
-  //           << "ja"
-  //           << "commentary";
-  m_header << "en"
+  QStringList header;
+  header << "id"
+           << "en"
            << "ja";
 
-  ui->tableWidget->setColumnCount(m_header.count());
-  ui->tableWidget->setHorizontalHeaderLabels(m_header);
-  //  ui->tableWidget->horizontalHeader()->hideSection(0);
+  ui->tableWidget->setColumnCount(header.count());
+  ui->tableWidget->setHorizontalHeaderLabels(header);
+  ui->tableWidget->horizontalHeader()->hideSection(0);
   //  ui->tableWidget->horizontalHeader()->setSectionResizeMode(
   //      3, QHeaderView::Stretch);
   ui->tableWidget->verticalHeader()->setVisible(false);
@@ -57,10 +55,10 @@ void MainWindow::setTable() {
     ui->tableWidget->insertRow(i);
 
     int cnt = -1;
-    //        QTableWidgetItem *idItem =
-    //            new QTableWidgetItem(QVariant(item.id()).toString());
-    //        ui->tableWidget->setItem(i, cnt, idItem);
-    //        idItem->setFlags(idItem->flags() & ~Qt::ItemIsEditable);
+    QTableWidgetItem *idItem =
+        new QTableWidgetItem(QVariant(item.id()).toString());
+    ui->tableWidget->setItem(i, ++cnt, idItem);
+    idItem->setFlags(idItem->flags() & ~Qt::ItemIsEditable);
 
     QTableWidgetItem *targetItem = new QTableWidgetItem(item.en());
     ui->tableWidget->setItem(i, ++cnt, targetItem);
