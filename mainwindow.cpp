@@ -13,6 +13,7 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
   ui->setupUi(this);
+    setWindowIcon(QIcon("://images/favicon.ico"));
   m_db = QSqlDatabase::addDatabase("QODBC", "linguistics");
   m_db.setDatabaseName("linguistics");
 

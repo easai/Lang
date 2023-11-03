@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/lang-favicon.ico</file>
+    </qresource>
+</RCC>
