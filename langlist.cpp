@@ -80,7 +80,24 @@ void LangList::createItem(QSqlDatabase *db, const QString &exp,
 
 void LangList::sort() { std::sort(m_list.begin(), m_list.end(), comparetaor); }
 
+QList<int> LangList::sort(const QList<int> &lst)
+{
+  QList<Lang> langList;
+  for(int i=0;i<lst.length();i++){
+    int idx=lst.at(i);
+    Lang lang(this,idx,getEn(idx),"");
+    langList.append(lang);
+  }
+  std::sort(langList.begin(),langList.end(),comparetaor);
+  QList<int> newList;
+  for(int i=0;i<langList.size();i++){
+    newList.append(langList.at(i).id());
+  }
+  return newList;
+}
+
 bool LangList::comparetaor(Lang a, Lang b) { return a.en() < b.en(); }
+
 
 QString LangList::getEn(int lang_id)
 {
