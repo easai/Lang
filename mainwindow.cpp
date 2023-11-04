@@ -2,7 +2,6 @@
 #include "./ui_mainwindow.h"
 #include "aboutdialog.h"
 #include "config.h"
-#include "lang.h"
 #include "langlist.h"
 
 #include <QInputDialog>
@@ -27,8 +26,11 @@ MainWindow::MainWindow(QWidget *parent)
   m_stateHeader << "id"
                 << "en"
                 << "ja";
+  m_officialHeader <<"Language"
+                   << "States";
   setLangTable();
   setStateTable();
+  setOfficialTable();
   connect(ui->tableWidget, &QTableWidget::cellChanged, this,
           &MainWindow::updateLangItem);
   connect(ui->pushButton_add, &QPushButton::clicked, this,
@@ -108,6 +110,41 @@ void MainWindow::setStateTable() {
 
     QTableWidgetItem *descItem = new QTableWidgetItem(item.ja());
     ui->tableWidget_states->setItem(i, ++cnt, descItem);
+  }
+}
+
+void MainWindow::setOfficialTable()
+{
+  int nItems = m_official.retrieve(&m_db);
+  ui->tableWidget_official->setRowCount(0);
+  if (nItems <= 0) {
+    return;
+  }
+
+  ui->tableWidget_official->setColumnCount(m_officialHeader.count());
+  ui->tableWidget_official->setHorizontalHeaderLabels(m_officialHeader);
+  ui->tableWidget_official->horizontalHeader()->setSectionResizeMode(
+      1, QHeaderView::Stretch);
+  ui->tableWidget_official->verticalHeader()->setVisible(false);
+
+  QMultiHash<int, QString> hash = m_official.langTable();
+  QList<int> lst=hash.uniqueKeys();
+  for (int i = 0; i < lst.count(); i++) {
+    int idx = lst.at(i);
+
+    QStringList stateList;
+    QMultiHash<int, QString>::const_iterator iter = hash.find(idx);
+    while (iter != hash.end() && iter.key() == idx) {
+        stateList.append(iter.value());
+        ++iter;
+    }
+    ui->tableWidget_official->insertRow(i);
+    int cnt = -1;
+    QTableWidgetItem *targetItem = new QTableWidgetItem(m_langList.getEn(idx));
+    ui->tableWidget_official->setItem(i, ++cnt, targetItem);
+
+    QTableWidgetItem *descItem = new QTableWidgetItem(stateList.join(", "));
+    ui->tableWidget_official->setItem(i, ++cnt, descItem);
   }
 }
 

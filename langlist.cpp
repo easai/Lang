@@ -36,6 +36,7 @@ int LangList::retrieve(QSqlDatabase *db) {
       //            QString commentary = query.value(++cnt).toString();
       Lang lang(this, id, en, ja);
       m_list.append(lang);
+      m_hashEn.insert(id, en);
     }
   }
   db->close();
@@ -80,6 +81,11 @@ void LangList::createItem(QSqlDatabase *db, const QString &exp,
 void LangList::sort() { std::sort(m_list.begin(), m_list.end(), comparetaor); }
 
 bool LangList::comparetaor(Lang a, Lang b) { return a.en() < b.en(); }
+
+QString LangList::getEn(int lang_id)
+{
+  return m_hashEn[lang_id];
+}
 
 QList<Lang> LangList::list() const { return m_list; }
 

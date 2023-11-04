@@ -4,6 +4,7 @@
 #include "Statelist.h"
 #include "config.h"
 #include "langlist.h"
+#include "official.h"
 #include <QMainWindow>
 #include <QSqlDatabase>
 
@@ -32,11 +33,14 @@ private:
   Config m_config;
   LangList m_langList;
   StateList m_stateList;
+  Official m_official;
   QSqlDatabase m_db;
   QStringList m_langHeader;
   QStringList m_stateHeader;
+  QStringList m_officialHeader;
 
   void setLangTable();
   void setStateTable();
+  void setOfficialTable();
 };
 #endif // MAINWINDOW_H

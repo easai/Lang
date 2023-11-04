@@ -5,6 +5,7 @@
 
 #include <QObject>
 #include <QSqlDatabase>
+#include <QHash>
 
 class LangList : public QObject
 {
@@ -19,6 +20,7 @@ public:
     void createItem(QSqlDatabase *db, const QString& exp, const QString& field);
     void sort();
     static bool comparetaor(Lang a, Lang b);
+    QString getEn(int lang_id);
 
     QList<Lang> list() const;
     void setList(const QList<Lang> &newList);
@@ -26,7 +28,7 @@ public:
 signals:
 private:
     QList<Lang> m_list;
-
+    QHash<int, QString> m_hashEn;
 };
 
 #endif // LANGLIST_H

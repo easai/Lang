@@ -18,11 +18,11 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="tab_lang">
        <attribute name="title">
-        <string>Languages</string>
+        <string>&amp;Languages</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
@@ -60,7 +60,7 @@
       </widget>
       <widget class="QWidget" name="tab_states">
        <attribute name="title">
-        <string>States</string>
+        <string>&amp;States</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_5">
         <item>
@@ -93,6 +93,16 @@
            </layout>
           </item>
          </layout>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab_official">
+       <attribute name="title">
+        <string>&amp;Official</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_6">
+        <item>
+         <widget class="QTableWidget" name="tableWidget_official"/>
         </item>
        </layout>
       </widget>
