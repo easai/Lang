@@ -29,6 +29,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         langlist.h langlist.cpp
         resources.qrc
         icon.rc
+        state.h state.cpp
+        statelist.h statelist.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET Lang APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

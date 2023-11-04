@@ -5,15 +5,15 @@
 #include "lang.h"
 #include "langlist.h"
 
+#include <QInputDialog>
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QtSql>
-#include <QInputDialog>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
   ui->setupUi(this);
-    setWindowIcon(QIcon("://images/favicon.ico"));
+  setWindowIcon(QIcon("://images/favicon.ico"));
   m_db = QSqlDatabase::addDatabase("QODBC", "linguistics");
   m_db.setDatabaseName("linguistics");
 
@@ -21,14 +21,22 @@ MainWindow::MainWindow(QWidget *parent)
   connect(ui->action_Quit, &QAction::triggered, this, &QApplication::quit);
   m_config.load();
   restoreGeometry(m_config.geom());
-  m_header << "id"
-           << "en"
-           << "ja";
-  setTable();
+  m_langHeader << "id"
+               << "en"
+               << "ja";
+  m_stateHeader << "id"
+                << "en"
+                << "ja";
+  setLangTable();
+  setStateTable();
   connect(ui->tableWidget, &QTableWidget::cellChanged, this,
-          &MainWindow::updateItem);
+          &MainWindow::updateLangItem);
   connect(ui->pushButton_add, &QPushButton::clicked, this,
-          &MainWindow::createItem);
+          &MainWindow::createLangItem);
+  connect(ui->tableWidget_states, &QTableWidget::cellChanged, this,
+          &MainWindow::updateStateItem);
+  connect(ui->pushButton_add_state, &QPushButton::clicked, this,
+          &MainWindow::createStateItem);
 }
 
 MainWindow::~MainWindow() {
@@ -37,20 +45,20 @@ MainWindow::~MainWindow() {
   delete ui;
 }
 
-void MainWindow::setTable() {
-  int nItems = m_list.retrieve(&m_db);
+void MainWindow::setLangTable() {
+  int nItems = m_langList.retrieve(&m_db);
   ui->tableWidget->setRowCount(0);
   if (nItems <= 0) {
     return;
   }
-  m_list.sort();
+  m_langList.sort();
 
-  ui->tableWidget->setColumnCount(m_header.count());
-  ui->tableWidget->setHorizontalHeaderLabels(m_header);
+  ui->tableWidget->setColumnCount(m_langHeader.count());
+  ui->tableWidget->setHorizontalHeaderLabels(m_langHeader);
   ui->tableWidget->horizontalHeader()->hideSection(0);
   ui->tableWidget->verticalHeader()->setVisible(false);
 
-  QList<Lang> lst = m_list.list();
+  QList<Lang> lst = m_langList.list();
   for (int i = 0; i < lst.count(); i++) {
     Lang item = lst.at(i);
 
@@ -70,7 +78,40 @@ void MainWindow::setTable() {
   }
 }
 
-void MainWindow::updateItem() {
+void MainWindow::setStateTable() {
+  int nItems = m_stateList.retrieve(&m_db);
+  ui->tableWidget_states->setRowCount(0);
+  if (nItems <= 0) {
+    return;
+  }
+  m_stateList.sort();
+
+  ui->tableWidget_states->setColumnCount(m_stateHeader.count());
+  ui->tableWidget_states->setHorizontalHeaderLabels(m_stateHeader);
+  ui->tableWidget_states->horizontalHeader()->hideSection(0);
+  ui->tableWidget_states->verticalHeader()->setVisible(false);
+
+  QList<State> lst = m_stateList.list();
+  for (int i = 0; i < lst.count(); i++) {
+    State item = lst.at(i);
+
+    ui->tableWidget_states->insertRow(i);
+
+    int cnt = -1;
+    QTableWidgetItem *idItem =
+        new QTableWidgetItem(QVariant(item.id()).toString());
+    ui->tableWidget_states->setItem(i, ++cnt, idItem);
+    idItem->setFlags(idItem->flags() & ~Qt::ItemIsEditable);
+
+    QTableWidgetItem *targetItem = new QTableWidgetItem(item.en());
+    ui->tableWidget_states->setItem(i, ++cnt, targetItem);
+
+    QTableWidgetItem *descItem = new QTableWidgetItem(item.ja());
+    ui->tableWidget_states->setItem(i, ++cnt, descItem);
+  }
+}
+
+void MainWindow::updateLangItem() {
   QList<QTableWidgetItem *> lst = ui->tableWidget->selectedItems();
   for (QTableWidgetItem *pItem : lst) {
     QString exp = pItem->text();
@@ -78,18 +119,41 @@ void MainWindow::updateItem() {
     int col = pItem->column();
     QTableWidgetItem *pId = ui->tableWidget->item(row, 0);
     int id = pId->text().toInt();
-    QString field = m_header.at(col);
-    m_list.updateItem(&m_db, exp, field, id);
+    QString field = m_langHeader.at(col);
+    m_langList.updateItem(&m_db, exp, field, id);
   }
 }
 
-void MainWindow::createItem() {
+void MainWindow::updateStateItem() {
+  QList<QTableWidgetItem *> lst = ui->tableWidget_states->selectedItems();
+  for (QTableWidgetItem *pItem : lst) {
+    QString exp = pItem->text();
+    int row = pItem->row();
+    int col = pItem->column();
+    QTableWidgetItem *pId = ui->tableWidget_states->item(row, 0);
+    int id = pId->text().toInt();
+    QString field = m_stateHeader.at(col);
+    m_stateList.updateItem(&m_db, exp, field, id);
+  }
+}
+
+void MainWindow::createLangItem() {
   bool ok;
-  QString exp = QInputDialog::getText(this, tr("Add new script"), tr("en"),
+  QString exp = QInputDialog::getText(this, tr("Add new language"), tr("en"),
                                       QLineEdit::Normal, "", &ok);
   if (ok) {
-    m_list.createItem(&m_db, exp, "en");
-    setTable();
+    m_langList.createItem(&m_db, exp, "en");
+    setLangTable();
+  }
+}
+
+void MainWindow::createStateItem() {
+  bool ok;
+  QString exp = QInputDialog::getText(this, tr("Add new state"), tr("en"),
+                                      QLineEdit::Normal, "", &ok);
+  if (ok) {
+    m_stateList.createItem(&m_db, exp, "en");
+    setStateTable();
   }
 }
 
