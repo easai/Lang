@@ -105,6 +105,23 @@ QString LangList::getEn(int lang_id) { return m_hashEn[lang_id]; }
 
 int LangList::getIndex(QString lang) { return m_hash[lang]; }
 
+void LangList::deleteItem(QSqlDatabase *db, int id)
+{
+  if (!db->open()) {
+    qInfo() << db->lastError().text();
+    return;
+  }
+  QSqlQuery query(*db);
+  QString sql = "DELETE FROM `languages` WHERE `languages`.`ID` = :id";
+  query.prepare(sql);
+  query.bindValue(":id", id);
+  if (!query.exec()) {
+    qInfo() << db->lastError().text();
+    qInfo() << query.lastError().text();
+  }
+  db->close();
+}
+
 QList<Lang> LangList::list() const { return m_list; }
 
 void LangList::setList(const QList<Lang> &newList) { m_list = newList; }

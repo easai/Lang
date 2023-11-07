@@ -46,6 +46,9 @@ MainWindow::MainWindow(QWidget *parent)
           &MainWindow::updateOfficialItem);
   connect(ui->pushButton_add_official, &QPushButton::clicked, this,
           &MainWindow::createOfficialItem);
+
+  ui->tableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+  connect(ui->tableWidget, &QTableWidget::customContextMenuRequested, this, &MainWindow::deleteLang);
 }
 
 MainWindow::~MainWindow() {
@@ -173,6 +176,23 @@ void MainWindow::updateLangItem() {
     QString field = m_langHeader.at(col);
     m_langList.updateItem(&m_db, exp, field, id);
   }
+}
+
+void MainWindow::deleteLangItem()
+{
+  m_langList.deleteItem(&m_db,m_current);
+  setLangTable();
+}
+
+void MainWindow::deleteLang(const QPoint& pos)
+{
+    QMenu *menu = new QMenu(this);
+    QAction *ciz = new QAction("&Delete");
+    connect(ciz, &QAction::triggered, this, &MainWindow::deleteLangItem);
+    menu->addAction(ciz);
+    menu->popup(ui->tableWidget->viewport()->mapToGlobal(pos));
+    int row=ui->tableWidget->itemAt(pos)->row();
+    m_current=ui->tableWidget->item(row,0)->text().toInt();
 }
 
 void MainWindow::updateStateItem() {

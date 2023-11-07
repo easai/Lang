@@ -23,6 +23,7 @@ public:
     static bool comparetaor(Lang a, Lang b);
     QString getEn(int lang_id);
     int getIndex(QString lang);
+    void deleteItem(QSqlDatabase *db, int id);
 
     QList<Lang> list() const;
     void setList(const QList<Lang> &newList);

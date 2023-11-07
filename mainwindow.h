@@ -7,6 +7,7 @@
 #include "official.h"
 #include <QMainWindow>
 #include <QSqlDatabase>
+#include <QTableWidgetItem>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -23,6 +24,8 @@ public:
 
 private slots:
   void updateLangItem();
+  void deleteLang(const QPoint & pos);
+  void deleteLangItem();
   void createLangItem();
   void updateStateItem();
   void createStateItem();
@@ -40,6 +43,7 @@ private:
   QStringList m_langHeader;
   QStringList m_stateHeader;
   QStringList m_officialHeader;
+  int m_current=-1;
 
   void setLangTable();
   void setStateTable();
