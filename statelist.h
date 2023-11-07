@@ -4,6 +4,7 @@
 #include "state.h"
 #include <QObject>
 #include <QSqlDatabase>
+#include <QHash>
 
 class StateList : public QObject {
   Q_OBJECT
@@ -18,6 +19,7 @@ public:
   void createItem(QSqlDatabase *db, const QString &exp, const QString &field);
   void sort();
   static bool comparetaor(State a, State b);
+  int getIndex(QString state);
 
   QList<State> list() const;
   void setList(const QList<State> &newList);
@@ -25,6 +27,7 @@ public:
 signals:
 private:
   QList<State> m_list;
+    QHash<QString, int> m_hash;
 };
 
 #endif // STATELIST_H

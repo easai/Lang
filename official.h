@@ -13,6 +13,7 @@ public:
 
     int retrieve(QSqlDatabase *db);
     QList<int> getUniqueKeys();
+    void createItem(QSqlDatabase *db, int lang_id, int state_id);
 
     QMultiHash<int, QString> langTable() const;
     void setLangTable(const QMultiHash<int, QString> &newLangTable);

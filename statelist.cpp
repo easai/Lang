@@ -6,11 +6,12 @@
 
 StateList::StateList(QObject *parent) : QObject{parent} {}
 
-StateList::StateList(const StateList &o) : m_list(o.m_list) {}
+StateList::StateList(const StateList &o) : m_list(o.m_list), m_hash(o.m_hash) {}
 
 StateList &StateList::operator=(const StateList &o) {
   if (this != &o) {
     m_list = o.m_list;
+    m_hash = o.m_hash;
   }
   return *this;
 }
@@ -36,6 +37,7 @@ int StateList::retrieve(QSqlDatabase *db) {
       //            QString commentary = query.value(++cnt).toString();
       State State(this, id, en, ja);
       m_list.append(State);
+      m_hash.insert(en, id);
     }
   }
   db->close();
@@ -80,6 +82,8 @@ void StateList::createItem(QSqlDatabase *db, const QString &exp,
 void StateList::sort() { std::sort(m_list.begin(), m_list.end(), comparetaor); }
 
 bool StateList::comparetaor(State a, State b) { return a.en() < b.en(); }
+
+int StateList::getIndex(QString state) { return m_hash[state]; }
 
 QList<State> StateList::list() const { return m_list; }
 

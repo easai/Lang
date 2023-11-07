@@ -3,6 +3,8 @@
 #include "aboutdialog.h"
 #include "config.h"
 #include "langlist.h"
+#include "statelistdialog.h"
+#include "officialdialog.h"
 
 #include <QInputDialog>
 #include <QSqlDatabase>
@@ -40,6 +42,10 @@ MainWindow::MainWindow(QWidget *parent)
           &MainWindow::updateStateItem);
   connect(ui->pushButton_add_state, &QPushButton::clicked, this,
           &MainWindow::createStateItem);
+  connect(ui->tableWidget_official, &QTableWidget::itemClicked, this,
+          &MainWindow::updateOfficialItem);
+  connect(ui->pushButton_add_official, &QPushButton::clicked, this,
+          &MainWindow::createOfficialItem);
 }
 
 MainWindow::~MainWindow() {
@@ -114,8 +120,7 @@ void MainWindow::setStateTable() {
   }
 }
 
-void MainWindow::setOfficialTable()
-{
+void MainWindow::setOfficialTable() {
   int nItems = m_official.retrieve(&m_db);
   ui->tableWidget_official->setRowCount(0);
   if (nItems <= 0) {
@@ -126,27 +131,26 @@ void MainWindow::setOfficialTable()
   ui->tableWidget_official->setHorizontalHeaderLabels(m_officialHeader);
   ui->tableWidget_official->horizontalHeader()->hideSection(0);
   ui->tableWidget_official->horizontalHeader()->setSectionResizeMode(
-      m_officialHeader.size()-1, QHeaderView::Stretch);
+      m_officialHeader.size() - 1, QHeaderView::Stretch);
   ui->tableWidget_official->verticalHeader()->setVisible(false);
 
   QMultiHash<int, QString> hash = m_official.langTable();
-  QList<int> keys=hash.uniqueKeys();
-  QList<int> lst=m_langList.sort(keys);
+  QList<int> keys = hash.uniqueKeys();
+  QList<int> lst = m_langList.sort(keys);
   for (int i = 0; i < lst.count(); i++) {
     int idx = lst.at(i);
 
     QStringList stateList;
     auto iter = hash.constFind(idx);
     while (iter != hash.cend() && iter.key() == idx) {
-        stateList.append(iter.value());
-        ++iter;
+      stateList.append(iter.value());
+      ++iter;
     }
 
     ui->tableWidget_official->insertRow(i);
     int cnt = -1;
 
-    QTableWidgetItem *idItem =
-        new QTableWidgetItem(QVariant(idx).toString());
+    QTableWidgetItem *idItem = new QTableWidgetItem(QVariant(idx).toString());
     ui->tableWidget_official->setItem(i, ++cnt, idItem);
     idItem->setFlags(idItem->flags() & ~Qt::ItemIsEditable);
 
@@ -201,6 +205,29 @@ void MainWindow::createStateItem() {
   if (ok) {
     m_stateList.createItem(&m_db, exp, "en");
     setStateTable();
+  }
+}
+
+void MainWindow::updateOfficialItem()
+{
+
+  StateListDialog* dlg=new StateListDialog(this);
+  dlg->setStateList(m_stateList);
+  dlg->setTable();
+  dlg->exec();
+}
+
+void MainWindow::createOfficialItem()
+{
+  OfficialDialog *dlg = new OfficialDialog(this);
+  dlg->setLangList(m_langList);
+  dlg->setStateList(m_stateList);
+  auto res = dlg->exec();
+  if (res == QDialog::Accepted) {
+    int lang_id=dlg->lang();
+    int state_id=dlg->state();
+    m_official.createItem(&m_db, lang_id, state_id);
+    setOfficialTable();
   }
 }
 

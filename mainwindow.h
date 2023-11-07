@@ -26,6 +26,8 @@ private slots:
   void createLangItem();
   void updateStateItem();
   void createStateItem();
+  void updateOfficialItem();
+  void createOfficialItem();
   void about();
 
 private:

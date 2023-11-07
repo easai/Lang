@@ -6,11 +6,14 @@
 
 LangList::LangList(QObject *parent) : QObject{parent} {}
 
-LangList::LangList(const LangList &o) : m_list(o.m_list) {}
+LangList::LangList(const LangList &o)
+    : m_list(o.m_list), m_hash(o.m_hash), m_hashEn(o.m_hashEn) {}
 
 LangList &LangList::operator=(const LangList &o) {
   if (this != &o) {
     m_list = o.m_list;
+    m_hash = o.m_hash;
+    m_hashEn = o.m_hashEn;
   }
   return *this;
 }
@@ -37,6 +40,7 @@ int LangList::retrieve(QSqlDatabase *db) {
       Lang lang(this, id, en, ja);
       m_list.append(lang);
       m_hashEn.insert(id, en);
+      m_hash.insert(en, id);
     }
   }
   db->close();
@@ -44,7 +48,7 @@ int LangList::retrieve(QSqlDatabase *db) {
 }
 
 void LangList::updateItem(QSqlDatabase *db, const QString &exp,
-                            const QString &field, int id) {
+                          const QString &field, int id) {
   if (!db->open()) {
     qInfo() << db->lastError().text();
     return;
@@ -62,7 +66,7 @@ void LangList::updateItem(QSqlDatabase *db, const QString &exp,
 }
 
 void LangList::createItem(QSqlDatabase *db, const QString &exp,
-                            const QString &field) {
+                          const QString &field) {
   if (!db->open()) {
     qInfo() << db->lastError().text();
     return;
@@ -80,17 +84,16 @@ void LangList::createItem(QSqlDatabase *db, const QString &exp,
 
 void LangList::sort() { std::sort(m_list.begin(), m_list.end(), comparetaor); }
 
-QList<int> LangList::sort(const QList<int> &lst)
-{
+QList<int> LangList::sort(const QList<int> &lst) {
   QList<Lang> langList;
-  for(int i=0;i<lst.length();i++){
-    int idx=lst.at(i);
-    Lang lang(this,idx,getEn(idx),"");
+  for (int i = 0; i < lst.length(); i++) {
+    int idx = lst.at(i);
+    Lang lang(this, idx, getEn(idx), "");
     langList.append(lang);
   }
-  std::sort(langList.begin(),langList.end(),comparetaor);
+  std::sort(langList.begin(), langList.end(), comparetaor);
   QList<int> newList;
-  for(int i=0;i<langList.size();i++){
+  for (int i = 0; i < langList.size(); i++) {
     newList.append(langList.at(i).id());
   }
   return newList;
@@ -98,11 +101,9 @@ QList<int> LangList::sort(const QList<int> &lst)
 
 bool LangList::comparetaor(Lang a, Lang b) { return a.en() < b.en(); }
 
+QString LangList::getEn(int lang_id) { return m_hashEn[lang_id]; }
 
-QString LangList::getEn(int lang_id)
-{
-  return m_hashEn[lang_id];
-}
+int LangList::getIndex(QString lang) { return m_hash[lang]; }
 
 QList<Lang> LangList::list() const { return m_list; }
 

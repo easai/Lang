@@ -22,6 +22,7 @@ public:
     QList<int> sort(const QList<int>&);
     static bool comparetaor(Lang a, Lang b);
     QString getEn(int lang_id);
+    int getIndex(QString lang);
 
     QList<Lang> list() const;
     void setList(const QList<Lang> &newList);
@@ -30,6 +31,7 @@ signals:
 private:
     QList<Lang> m_list;
     QHash<int, QString> m_hashEn;
+    QHash<QString, int> m_hash;
 };
 
 #endif // LANGLIST_H
