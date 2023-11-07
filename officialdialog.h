@@ -25,6 +25,7 @@ public:
     void setStateList(const StateList &newStateList);
 
     LangList langList() const;
+
     void setLangList(const LangList &newLangList);
 
 private slots:
