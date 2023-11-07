@@ -79,6 +79,22 @@ void StateList::createItem(QSqlDatabase *db, const QString &exp,
   db->close();
 }
 
+void StateList::deleteItem(QSqlDatabase *db, int id) {
+  if (!db->open()) {
+    qInfo() << db->lastError().text();
+    return;
+  }
+  QSqlQuery query(*db);
+  QString sql = "DELETE FROM `states` WHERE `states`.`ID` = :id";
+  query.prepare(sql);
+  query.bindValue(":id", id);
+  if (!query.exec()) {
+    qInfo() << db->lastError().text();
+    qInfo() << query.lastError().text();
+  }
+  db->close();
+}
+
 void StateList::sort() { std::sort(m_list.begin(), m_list.end(), comparetaor); }
 
 bool StateList::comparetaor(State a, State b) { return a.en() < b.en(); }

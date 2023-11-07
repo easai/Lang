@@ -17,6 +17,7 @@ public:
   void updateItem(QSqlDatabase *db, const QString &exp, const QString &field,
                   int id);
   void createItem(QSqlDatabase *db, const QString &exp, const QString &field);
+  void deleteItem(QSqlDatabase *db, int id);
   void sort();
   static bool comparetaor(State a, State b);
   int getIndex(QString state);

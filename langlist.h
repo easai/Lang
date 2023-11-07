@@ -18,12 +18,12 @@ public:
     int retrieve(QSqlDatabase* db);
     void updateItem(QSqlDatabase *db, const QString& exp, const QString& field, int id);
     void createItem(QSqlDatabase *db, const QString& exp, const QString& field);
+    void deleteItem(QSqlDatabase *db, int id);
     void sort();
     QList<int> sort(const QList<int>&);
     static bool comparetaor(Lang a, Lang b);
     QString getEn(int lang_id);
     int getIndex(QString lang);
-    void deleteItem(QSqlDatabase *db, int id);
 
     QList<Lang> list() const;
     void setList(const QList<Lang> &newList);

@@ -28,6 +28,8 @@ private slots:
   void deleteLangItem();
   void createLangItem();
   void updateStateItem();
+  void deleteState(const QPoint & pos);
+  void deleteStateItem();
   void createStateItem();
   void updateOfficialItem();
   void createOfficialItem();
@@ -43,7 +45,8 @@ private:
   QStringList m_langHeader;
   QStringList m_stateHeader;
   QStringList m_officialHeader;
-  int m_current=-1;
+  int m_currentLang=-1;
+  int m_currentState=-1;
 
   void setLangTable();
   void setStateTable();

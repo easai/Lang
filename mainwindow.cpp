@@ -3,8 +3,8 @@
 #include "aboutdialog.h"
 #include "config.h"
 #include "langlist.h"
-#include "statelistdialog.h"
 #include "officialdialog.h"
+#include "statelistdialog.h"
 
 #include <QInputDialog>
 #include <QSqlDatabase>
@@ -48,7 +48,11 @@ MainWindow::MainWindow(QWidget *parent)
           &MainWindow::createOfficialItem);
 
   ui->tableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
-  connect(ui->tableWidget, &QTableWidget::customContextMenuRequested, this, &MainWindow::deleteLang);
+  connect(ui->tableWidget, &QTableWidget::customContextMenuRequested, this,
+          &MainWindow::deleteLang);
+  ui->tableWidget_states->setContextMenuPolicy(Qt::CustomContextMenu);
+  connect(ui->tableWidget_states, &QTableWidget::customContextMenuRequested, this,
+          &MainWindow::deleteState);
 }
 
 MainWindow::~MainWindow() {
@@ -178,21 +182,34 @@ void MainWindow::updateLangItem() {
   }
 }
 
-void MainWindow::deleteLangItem()
-{
-  m_langList.deleteItem(&m_db,m_current);
+void MainWindow::deleteLangItem() {
+  m_langList.deleteItem(&m_db, m_currentLang);
   setLangTable();
 }
 
-void MainWindow::deleteLang(const QPoint& pos)
-{
-    QMenu *menu = new QMenu(this);
-    QAction *ciz = new QAction("&Delete");
-    connect(ciz, &QAction::triggered, this, &MainWindow::deleteLangItem);
-    menu->addAction(ciz);
-    menu->popup(ui->tableWidget->viewport()->mapToGlobal(pos));
-    int row=ui->tableWidget->itemAt(pos)->row();
-    m_current=ui->tableWidget->item(row,0)->text().toInt();
+void MainWindow::deleteLang(const QPoint &pos) {
+  QMenu *menu = new QMenu(this);
+  QAction *ciz = new QAction("&Delete Language");
+  connect(ciz, &QAction::triggered, this, &MainWindow::deleteLangItem);
+  menu->addAction(ciz);
+  menu->popup(ui->tableWidget->viewport()->mapToGlobal(pos));
+  int row = ui->tableWidget->itemAt(pos)->row();
+  m_currentLang = ui->tableWidget->item(row, 0)->text().toInt();
+}
+
+void MainWindow::deleteStateItem() {
+  m_stateList.deleteItem(&m_db, m_currentState);
+  setStateTable();
+}
+
+void MainWindow::deleteState(const QPoint &pos) {
+  QMenu *menu = new QMenu(this);
+  QAction *ciz = new QAction("&Delete State");
+  connect(ciz, &QAction::triggered, this, &MainWindow::deleteStateItem);
+  menu->addAction(ciz);
+  menu->popup(ui->tableWidget_states->viewport()->mapToGlobal(pos));
+  int row = ui->tableWidget_states->itemAt(pos)->row();
+  m_currentState = ui->tableWidget_states->item(row, 0)->text().toInt();
 }
 
 void MainWindow::updateStateItem() {
@@ -228,24 +245,22 @@ void MainWindow::createStateItem() {
   }
 }
 
-void MainWindow::updateOfficialItem()
-{
+void MainWindow::updateOfficialItem() {
 
-  StateListDialog* dlg=new StateListDialog(this);
+  StateListDialog *dlg = new StateListDialog(this);
   dlg->setStateList(m_stateList);
   dlg->setTable();
   dlg->exec();
 }
 
-void MainWindow::createOfficialItem()
-{
+void MainWindow::createOfficialItem() {
   OfficialDialog *dlg = new OfficialDialog(this);
   dlg->setLangList(m_langList);
   dlg->setStateList(m_stateList);
   auto res = dlg->exec();
   if (res == QDialog::Accepted) {
-    int lang_id=dlg->lang();
-    int state_id=dlg->state();
+    int lang_id = dlg->lang();
+    int state_id = dlg->state();
     m_official.createItem(&m_db, lang_id, state_id);
     setOfficialTable();
   }

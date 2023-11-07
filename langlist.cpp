@@ -105,8 +105,7 @@ QString LangList::getEn(int lang_id) { return m_hashEn[lang_id]; }
 
 int LangList::getIndex(QString lang) { return m_hash[lang]; }
 
-void LangList::deleteItem(QSqlDatabase *db, int id)
-{
+void LangList::deleteItem(QSqlDatabase *db, int id) {
   if (!db->open()) {
     qInfo() << db->lastError().text();
     return;
